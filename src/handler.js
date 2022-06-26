@@ -52,5 +52,26 @@ const getAllBooks = () =>({
         books,
     }
 });
+const getBooksById = (request,h) =>{
+    const {id} = request.params;
+    const hasil = books.filter((book)=>book.id === id);
 
-module.exports = {addBooks,getAllBooks};
+    if (hasil){
+        const response = h.response({
+            "status": "fail",
+            "message": "Buku tidak ditemukan"
+        });
+        response.code(404);
+        return response;
+    }else{
+        const response = h.response({
+            "status": "success",
+            "data" : hasil,
+        });
+        response.code(200);
+        return response;
+    }
+
+};
+
+module.exports = {addBooks,getAllBooks,getBooksById};
