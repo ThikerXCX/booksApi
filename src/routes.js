@@ -1,5 +1,5 @@
 const { handler } = require("@hapi/hapi/lib/cors");
-const { addBooks, getAllBooks, getBooksById, updateBooksById } = require("./handler");
+const { addBooks, getAllBooks, getBooksById, updateBooksById, deleteBooksById } = require("./handler");
 
 routes = [
     {
@@ -22,6 +22,11 @@ routes = [
         path :  '/books/{id}',
         handler :   updateBooksById
     },
+    {
+        method : "DELETE",
+        path : "/books/{id}",
+        handler : deleteBooksById
+    }
 ];
 
 module.exports = routes;

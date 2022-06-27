@@ -122,8 +122,28 @@ const updateBooksById=(request,h)=>{
         status: 'success',
         message: "Buku berhasil diperbarui",
       });
-      response.code(200);
-      return response;
+    response.code(200);
+    return response;
+}
+const deleteBooksById=(request,h)=>{
+    const {id} = request.params;
+    const index = books.findIndex((book)=>book.id===id);
+
+    if (index !== -1) {
+        books.splice(index, 1);
+        const response = h.response({
+          status: 'success',
+          message: 'Catatan berhasil dihapus',
+        });
+        response.code(200);
+        return response;
+    } 
+    const response = h.response({
+        status: 'fail',
+        message: 'Catatan gagal dihapus. Id tidak ditemukan',
+    });
+    response.code(404);
+    return response;
 }
 
-module.exports = {addBooks,getAllBooks,getBooksById,updateBooksById};
+module.exports = {addBooks,getAllBooks,getBooksById,updateBooksById,deleteBooksById};
