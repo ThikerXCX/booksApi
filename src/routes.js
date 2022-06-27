@@ -1,5 +1,5 @@
 const { handler } = require("@hapi/hapi/lib/cors");
-const { addBooks, getAllBooks, getBooksById } = require("./handler");
+const { addBooks, getAllBooks, getBooksById, updateBooksById } = require("./handler");
 
 routes = [
     {
@@ -16,6 +16,11 @@ routes = [
         method : "GET",
         path : '/books/{id}',
         handler : getBooksById
+    },
+    {
+        method : 'PUT',
+        path :  '/books/{id}',
+        handler :   updateBooksById
     },
 ];
 
