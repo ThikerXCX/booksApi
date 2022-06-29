@@ -47,7 +47,7 @@ const addBooks = (request,h) =>{
     response.code(500)
 }
 const getAllBooks = (request,h) =>{
-    const { name,reading = null,finished = null } = request.query;
+    const { name,reading,finished} = request.query;
     let cari = books;
     if(name){
         cari = cari.filter((book)=>book.name == name);
