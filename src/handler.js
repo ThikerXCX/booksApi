@@ -1,4 +1,3 @@
-const { response } = require("@hapi/hapi/lib/validation");
 const { nanoid } = require("nanoid");
 const books = require('./books');
 
@@ -48,26 +47,23 @@ const addBooks = (request,h) =>{
     response.code(500)
 }
 const getAllBooks = (request,h) =>{
-    const { name,reading,finished } = request.query;
-    const read = reading ? true:false;
-    const finish = finished ? true : false;
-    const data = [];
+    const { name,reading = null,finished = null } = request.query;
+    let cari = books;
     if(name){
-         data = books.filter((book)=>book.name === name);
+        cari = cari.filter((book)=>book.name == name);
     }
     if(reading){
-        data = books.filter((book)=>book.reading === reading);
+        cari = cari.filter((book)=>book.reading == reading);
     }
     if(finished){
-        data = books.filter((book)=>book.name === name);
+        cari = cari.filter((book)=>book.finished == finished);
     }
-    
 
     const response = h.response(
         {
             status : "success",
             data : {
-                data,
+                cari,
             }
         });
     
