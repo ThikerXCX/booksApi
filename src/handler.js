@@ -48,27 +48,26 @@ const addBooks = (request,h) =>{
 }
 const getAllBooks = (request,h) =>{
     const { name,reading,finished} = request.query;
+    let book = books
     if(name){
-        books = books.filter((book)=>book.name.includes(name));
+        book = books.filter((book)=>book.name.toLowerCase().includes(name.toLowerCase()));
     }
     if(reading == 1 || reading == 0){
-        books = books.filter((book)=>book.reading == reading);
+        book = books.filter((book)=>book.reading == reading);
     }
-    if(finished==1 || reading == 0){
-        books = books.filter((book)=>book.finished == finished);
+    if(finished== 1 || reading == 0){
+        book = books.filter((book)=>book.finished == finished);
     }
-    books = books.forEach((book)=>{[
-        {
-            "id" : book.id,
-            "name" : book.name,
-            "publisher" : book.publisher
-        }]
-    })
+
     const response = h.response(
         {
             status : "success",
             data : {
-                books,
+                books : book.map((book)=>({
+                    id : book.id,
+                    name: book.name,
+                    publisher: book.publisher,
+                })),
             }
         });
     response.code(200);
@@ -82,9 +81,9 @@ const getBooksById = (request,h) =>{
         const response = h.response({
             status : "fail",
             message : "Buku tidak ditemukan",
-            code :  404
         });
-        
+        response.code(404);
+        return response;
     }else{
         let book = books[0];
         const response = h.response({
@@ -93,8 +92,9 @@ const getBooksById = (request,h) =>{
                 book,
             },
         });
+        response.code(200);
+        return response;
     }
-    return response;
 };
 const updateBooksById=(request,h)=>{
     const {id} = request.params;
@@ -102,9 +102,9 @@ const updateBooksById=(request,h)=>{
     updateAt = new Date().toISOString;
     finished = pageCount === readPage ? true : false;
 
-    const cari = books.findIndex((book)=>book.id===id);
+    const index = books.findIndex((book)=>book.id===id);
     
-    if(cari === -1){
+    if(index === -1){
         const response = h.response ({
             status : "fail",
             message : 'Gagal memperbarui buku. Id tidak ditemukan'
@@ -130,17 +130,19 @@ const updateBooksById=(request,h)=>{
         return response;
     }
     
-    books[cari] = {
-        ...books[cari],name,
-        year,
-        author,
-        summary,
-        publisher,
-        pageCount,
-        readPage,
-        reading,
-        updateAt,
-        finished
+    if(index !== -1){
+        books[index] = {
+            ...books[index],name,
+            year,
+            author,
+            summary,
+            publisher,
+            pageCount,
+            readPage,
+            reading,
+            updateAt,
+            finished
+        }
     }
     const response = h.response({
         status: 'success',
