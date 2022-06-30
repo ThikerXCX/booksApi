@@ -58,6 +58,13 @@ const getAllBooks = (request,h) =>{
     if(finished==1 || reading == 0){
         books = books.filter((book)=>book.finished == finished);
     }
+    books = books.forEach((book)=>{[
+        {
+            "id" : book.id,
+            "name" : book.name,
+            "publisher" : book.publisher
+        }]
+    })
     const response = h.response(
         {
             status : "success",
@@ -140,7 +147,7 @@ const updateBooksById=(request,h)=>{
     const response = h.response({
         status: 'success',
         message: "Buku berhasil diperbarui",
-      });
+    });
     response.code(200);
     return response;
 }
