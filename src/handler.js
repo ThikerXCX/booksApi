@@ -32,7 +32,7 @@ const addBooks = (request,h) =>{
     if(isSuccess){
         const response = h.response({
             status : 'success',
-            message : "berhasil ditambahkan",
+            message : "Buku berhasil ditambahkan",
             data : {
                 bookId : id,
             },
@@ -48,47 +48,45 @@ const addBooks = (request,h) =>{
 }
 const getAllBooks = (request,h) =>{
     const { name,reading,finished} = request.query;
-    let cari = books;
     if(name){
-        cari = cari.filter((book)=>book.name == name);
+        books = books.filter((book)=>book.name == name);
     }
     if(reading){
-        cari = cari.filter((book)=>book.reading == reading);
+        books = books.filter((book)=>book.reading == reading);
     }
     if(finished){
-        cari = cari.filter((book)=>book.finished == finished);
+        books = books.filter((book)=>book.finished == finished);
     }
 
     const response = h.response(
         {
             status : "success",
             data : {
-                cari,
+                books,
             }
         });
-    
+    response.code(200);
     return response;
 }
 const getBooksById = (request,h) =>{
     const {id} = request.params;
-    const hasil = books.filter((book)=>book.id === id);
+    const book = books.filter((book)=>book.id === id);
 
     if (hasil){
         const response = h.response({
-            "status": "fail",
-            "message": "Buku tidak ditemukan"
+            status : "fail",
+            message : "Buku tidak ditemukan",
+            code :  404
         });
-        response.code(404);
-        return response;
+        
     }else{
         const response = h.response({
-            "status": "success",
-            "data" : hasil,
+            status: "success",
+            data : {book},
+            code : 200,
         });
-        response.code(200);
-        return response;
     }
-
+    return response;
 };
 const updateBooksById=(request,h)=>{
     const {id} = request.params;
