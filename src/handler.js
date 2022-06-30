@@ -1,11 +1,11 @@
 const { nanoid } = require("nanoid");
-const books = require('./books');
+let books = require('./books');
 
 const addBooks = (request,h) =>{
     const {name,year,author,summary,publisher,pageCount,readPage,reading} = request.payload;
     const id = nanoid(16);
-    insertAt = new Date().toISOString();
-    updateAt = insertAt;
+    insertedAt = new Date().toISOString();
+    updatedAt = insertedAt;
     finished = pageCount === readPage ? true : false;
 
     if(name == undefined){
@@ -23,7 +23,7 @@ const addBooks = (request,h) =>{
         response.code(400);
         return response;
     }
-    const newBooks = {id,name,year,author,summary,publisher,pageCount,readPage,finished,reading,insertAt,updateAt};
+    const newBooks = {id,name,year,author,summary,publisher,pageCount,readPage,finished,reading,insertedAt,updatedAt};
 
     books.push(newBooks);
 
@@ -32,7 +32,7 @@ const addBooks = (request,h) =>{
     if(isSuccess){
         const response = h.response({
             status : 'success',
-            message : "Buku berhasil ditambahkan",
+            message : 'Buku berhasil ditambahkan',
             data : {
                 bookId : id,
             },
@@ -49,15 +49,21 @@ const addBooks = (request,h) =>{
 const getAllBooks = (request,h) =>{
     const { name,reading,finished} = request.query;
     if(name){
-        books = books.filter((book)=>book.name == name);
+        books = books.filter((book)=>book.name.includes(name));
     }
-    if(reading){
+    if(reading == 1 || reading == 0){
         books = books.filter((book)=>book.reading == reading);
     }
-    if(finished){
+    if(finished==1 || reading == 0){
         books = books.filter((book)=>book.finished == finished);
     }
-
+    books = books.forEach((book)=>{[
+        {
+            "id" : book.id,
+            "name" : book.name,
+            "publisher" : book.publisher
+        }]
+    })
     const response = h.response(
         {
             status : "success",
@@ -70,9 +76,9 @@ const getAllBooks = (request,h) =>{
 }
 const getBooksById = (request,h) =>{
     const {id} = request.params;
-    const book = books.filter((book)=>book.id === id);
+    books = books.filter((book)=>book.id === id);
 
-    if (hasil){
+    if (books.length == 0){
         const response = h.response({
             status : "fail",
             message : "Buku tidak ditemukan",
@@ -80,10 +86,12 @@ const getBooksById = (request,h) =>{
         });
         
     }else{
+        let book = books[0];
         const response = h.response({
-            status: "success",
-            data : {book},
-            code : 200,
+            "status": "success",
+            "data" : {
+                book,
+            },
         });
     }
     return response;
@@ -99,7 +107,7 @@ const updateBooksById=(request,h)=>{
     if(cari === -1){
         const response = h.response ({
             status : "fail",
-            message : "Buku tidak ditemukan"
+            message : 'Gagal memperbarui buku. Id tidak ditemukan'
         });
         response.code(404);
         return response;
@@ -115,7 +123,8 @@ const updateBooksById=(request,h)=>{
     if (readPage>pageCount) {
         const response = h.response ({
             status : "fail",
-            message : "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount"
+            message : 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount'
+
         });
         response.code(400);
         return response;
@@ -136,7 +145,7 @@ const updateBooksById=(request,h)=>{
     const response = h.response({
         status: 'success',
         message: "Buku berhasil diperbarui",
-      });
+    });
     response.code(200);
     return response;
 }
@@ -147,15 +156,15 @@ const deleteBooksById=(request,h)=>{
     if (index !== -1) {
         books.splice(index, 1);
         const response = h.response({
-          status: 'success',
-          message: 'Catatan berhasil dihapus',
+            status: 'success',
+            message: 'Buku berhasil dihapus'
         });
         response.code(200);
         return response;
     } 
     const response = h.response({
         status: 'fail',
-        message: 'Catatan gagal dihapus. Id tidak ditemukan',
+        message:  'Buku gagal dihapus. Id tidak ditemukan'
     });
     response.code(404);
     return response;
