@@ -50,13 +50,12 @@ const getAllBooks = (request,h) =>{
     const { name,reading,finished} = request.query;
 
     if(name){
-        books = books.filter((book)=>book.name == name);
+        books = books.filter((book)=>book.name.includes(name));
     }
-    if(reading != null){
+    if(reading == 1 || reading == 0){
         books = books.filter((book)=>book.reading == reading);
-        return books
     }
-    if(!finished){
+    if(finished==1 || reading == 0){
         books = books.filter((book)=>book.finished == finished);
     }
     const response = h.response(
@@ -145,8 +144,6 @@ const updateBooksById=(request,h)=>{
     response.code(200);
     return response;
 }
-
-
 const deleteBooksById=(request,h)=>{
     const {id} = request.params;
     const index = books.findIndex((book)=>book.id===id);
