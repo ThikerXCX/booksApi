@@ -53,10 +53,10 @@ const getAllBooks = (request,h) =>{
         book = books.filter((book)=>book.name.toLowerCase().includes(name.toLowerCase()));
     }
     if(reading == 1 || reading == 0){
-        book = books.filter((book)=>book.reading == reading);
+        book = books.filter((book)=>Number(book.reading) == reading);
     }
     if(finished== 1 || reading == 0){
-        book = books.filter((book)=>book.finished == finished);
+        book = books.filter((book)=>Number(book.finished) == finished);
     }
 
     const response = h.response(
