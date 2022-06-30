@@ -49,13 +49,14 @@ const addBooks = (request,h) =>{
 const getAllBooks = (request,h) =>{
     const { name,reading,finished} = request.query;
     let book = books
-    if(name){
+    if(name!=undefined){
         book = books.filter((book)=>book.name.toLowerCase().includes(name.toLowerCase()));
     }
     if(reading == 1 || reading == 0){
-        book = books.filter((book)=>Number(book.reading) == reading);
+        book = books.filter((book)=>book.reading==reading);
     }
-    if(finished== 1 || reading == 0){
+
+    if(finished== 1 || finished == 0){
         book = books.filter((book)=>Number(book.finished) == finished);
     }
 
@@ -99,19 +100,9 @@ const getBooksById = (request,h) =>{
 const updateBooksById=(request,h)=>{
     const {id} = request.params;
     const {name,year,author,summary,publisher,pageCount,readPage,reading} = request.payload;
-    updateAt = new Date().toISOString;
+    updatedAt = new Date().toISOString();
     finished = pageCount === readPage ? true : false;
 
-    const index = books.findIndex((book)=>book.id===id);
-    
-    if(index === -1){
-        const response = h.response ({
-            status : "fail",
-            message : 'Gagal memperbarui buku. Id tidak ditemukan'
-        });
-        response.code(404);
-        return response;
-    }
     if(name == undefined){
         const response = h.response ({
             status : "fail",
@@ -129,10 +120,20 @@ const updateBooksById=(request,h)=>{
         response.code(400);
         return response;
     }
-    
-    if(index !== -1){
+
+    const index = books.findIndex((book)=>book.id===id);
+
+    if(index === -1){
+        const response = h.response ({
+            status : "fail",
+            message : 'Gagal memperbarui buku. Id tidak ditemukan'
+        });
+        response.code(404);
+        return response;
+    }else{
         books[index] = {
-            ...books[index],name,
+            ...books[index],
+            name,
             year,
             author,
             summary,
@@ -140,16 +141,16 @@ const updateBooksById=(request,h)=>{
             pageCount,
             readPage,
             reading,
-            updateAt,
+            updatedAt,
             finished
         }
+        const response = h.response({
+            status: 'success',
+            message: "Buku berhasil diperbarui",
+        });
+        response.code(200);
+        return response;
     }
-    const response = h.response({
-        status: 'success',
-        message: "Buku berhasil diperbarui",
-    });
-    response.code(200);
-    return response;
 }
 const deleteBooksById=(request,h)=>{
     const {id} = request.params;
