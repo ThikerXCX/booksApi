@@ -1,5 +1,5 @@
 const { nanoid } = require("nanoid");
-let books = require('./books');
+const books = require('./books');
 
 const addBooks = (request,h) =>{
     const {name,year,author,summary,publisher,pageCount,readPage,reading} = request.payload;
@@ -76,9 +76,9 @@ const getAllBooks = (request,h) =>{
 }
 const getBooksById = (request,h) =>{
     const {id} = request.params;
-    books = books.filter((book)=>book.id === id);
+    const index = books.filter((book)=>book.id === id);
 
-    if (books.length == 0){
+    if (index.length == 0){
         const response = h.response({
             status : "fail",
             message : "Buku tidak ditemukan",
